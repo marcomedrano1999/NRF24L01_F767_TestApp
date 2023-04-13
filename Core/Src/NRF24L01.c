@@ -167,7 +167,7 @@ void NRF24_TxMode(uint8_t *addr, uint8_t channel)
 
 
 // transmit the data
-uint8_t NRF24_Transmit(uint8_t *data, uint32_t len)
+uint8_t NRF24_Transmit(uint8_t *data)
 {
 	uint8_t cmd_to_send=0;
 
@@ -179,7 +179,7 @@ uint8_t NRF24_Transmit(uint8_t *data, uint32_t len)
 	HAL_SPI_Transmit(NRF24_SPI, &cmd_to_send, 1, HAL_MAX_DELAY);
 
 	// send the payload
-	HAL_SPI_Transmit(NRF24_SPI, data, len, 1000);
+	HAL_SPI_Transmit(NRF24_SPI, data, 32, 1000);
 
 	// Select the device
 	CS_Select();
@@ -196,4 +196,73 @@ uint8_t NRF24_Transmit(uint8_t *data, uint32_t len)
 		return 1;
 	}
 	return 0;
+}
+
+
+
+void NRF24_RxMode(uint8_t *addr, uint8_t channel)
+{
+	// disable the chip before configuring the device
+	CE_Disable();
+
+	// Select the channel
+	nrf24_writeReg(NRF24_RF_CH, channel);
+
+	// Select data pipe 1
+	uint8_t en_rxaddr = nrf24_ReadReg(NRF24_EN_RXADDR);
+	en_rxaddr |= (1 << 1);
+	nrf24_writeReg(NRF24_EN_RXADDR, en_rxaddr);
+
+	// Write the tx address
+	nrf24_writeRegMulti(NRF24_RX_ADDR_P1, addr,5);
+
+	// 32 bit paayload size for pipe 1
+	nrf24_writeReg(NRF24_RX_PW_P1, 32);
+
+	// Power up the device
+	uint8_t config = nrf24_ReadReg(NRF24_CONFIG);
+	config |= (1 << 1) | (1 << 0);
+	nrf24_writeReg(NRF24_CONFIG, config);
+
+	// Enable the chip after configuring the device
+	CE_Enable();
+}
+
+
+uint8_t isDataAvailable(uint32_t pipenum)
+{
+	uint8_t status = nrf24_ReadReg(NRF24_STATUS);
+
+	if((status & (1<<6)) && (status & (pipenum<<1)))
+	{
+		nrf24_writeReg(NRF24_STATUS, (1<<6));
+
+		return 1;
+	}
+	return 0;
+}
+
+// receive the data
+void NRF24_Receive(uint8_t *data)
+{
+	uint8_t cmd_to_send=0;
+
+	// select the device
+	CS_Select();
+
+	// payload command
+	cmd_to_send=NRF24_R_RX_PAYLOAD;
+	HAL_SPI_Transmit(NRF24_SPI, &cmd_to_send, 1, HAL_MAX_DELAY);
+
+	// send the payload
+	HAL_SPI_Transmit(NRF24_SPI, data, 32, 1000);
+
+	// Select the device
+	CS_Select();
+
+	HAL_Delay(10);
+
+	cmd_to_send = NRF24_FLUSH_RX;
+	nrf24SendCmd(cmd_to_send);
+
 }

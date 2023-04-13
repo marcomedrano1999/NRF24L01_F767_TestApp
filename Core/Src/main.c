@@ -139,7 +139,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	  if(NRF24_Transmit(TxData, sizeof(TxData)) == 1)
+	  if(NRF24_Transmit(TxData) == 1)
 	  {
 		  HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
 	  }
