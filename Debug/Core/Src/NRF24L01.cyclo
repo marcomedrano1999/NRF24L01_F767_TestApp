@@ -1,0 +1,12 @@
+NRF24L01.c:15:6:CS_Select	1
+NRF24L01.c:20:6:CS_UnSelect	1
+NRF24L01.c:25:6:CE_Enable	1
+NRF24L01.c:30:6:CE_Disable	1
+NRF24L01.c:35:6:nrf24_writeReg	1
+NRF24L01.c:51:6:nrf24_writeRegMulti	1
+NRF24L01.c:67:9:nrf24_ReadReg	1
+NRF24L01.c:86:6:nrf24_ReadReg_Multi	1
+NRF24L01.c:102:6:nrf24SendCmd	1
+NRF24L01.c:116:6:NRF24_Init	1
+NRF24L01.c:148:6:NRF24_TxMode	1
+NRF24L01.c:170:9:NRF24_Transmit	3
