@@ -13,3 +13,4 @@
 ../Core/Src/NRF24L01.c:203:6:NRF24_RxMode	24	static
 ../Core/Src/NRF24L01.c:232:9:isDataAvailable	24	static
 ../Core/Src/NRF24L01.c:246:6:NRF24_Receive	24	static
+../Core/Src/NRF24L01.c:270:6:nrf24_reset	40	static

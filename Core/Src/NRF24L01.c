@@ -266,3 +266,47 @@ void NRF24_Receive(uint8_t *data)
 	nrf24SendCmd(cmd_to_send);
 
 }
+
+void nrf24_reset(uint8_t REG)
+{
+	if(REG == NRF24_STATUS)
+	{
+		nrf24_writeReg(NRF24_STATUS,0x00);
+	}
+	else if(REG == NRF24_FIFO_STATUS)
+	{
+		nrf24_writeReg(NRF24_FIFO_STATUS, 0x11);
+	}
+	else
+	{
+		nrf24_writeReg(NRF24_CONFIG, 0x08);
+		nrf24_writeReg(NRF24_EN_AA, 0x3F);
+		nrf24_writeReg(NRF24_EN_RXADDR, 0x3);
+		nrf24_writeReg(NRF24_SETUP_AW, 0x03);
+		nrf24_writeReg(NRF24_SETUP_RETR, 0x03);
+		nrf24_writeReg(NRF24_RF_CH, 0x02);
+		nrf24_writeReg(NRF24_RF_SETUP, 0x0E);
+		nrf24_writeReg(NRF24_STATUS, 0x00);
+		nrf24_writeReg(NRF24_OBSERVE_TX, 0x00);
+		nrf24_writeReg(NRF24_CD, 0x00);
+		uint8_t rx_addr_p0_def[5] = {0xE7, 0xE7, 0xE7, 0xE7, 0xE7};
+		nrf24_writeRegMulti(NRF24_RX_ADDR_P0, rx_addr_p0_def, 5);
+		uint8_t rx_addr_p1_def[5] = {0xC2, 0xC2, 0xC2, 0xC2, 0xC2};
+		nrf24_writeRegMulti(NRF24_RX_ADDR_P1, rx_addr_p1_def, 5);
+		nrf24_writeReg(NRF24_RX_ADDR_P2, 0xC3);
+		nrf24_writeReg(NRF24_RX_ADDR_P3, 0xC4);
+		nrf24_writeReg(NRF24_RX_ADDR_P4, 0xC5);
+		nrf24_writeReg(NRF24_RX_ADDR_P5, 0xC6);
+		uint8_t tx_addr_def[5] = {0xE7, 0xE7, 0xE7, 0xE7, 0xE7};
+		nrf24_writeRegMulti(NRF24_TX_ADDR, tx_addr_def, 5);
+		nrf24_writeReg(NRF24_RX_PW_P0, 0);
+		nrf24_writeReg(NRF24_RX_PW_P1, 0);
+		nrf24_writeReg(NRF24_RX_PW_P2, 0);
+		nrf24_writeReg(NRF24_RX_PW_P3, 0);
+		nrf24_writeReg(NRF24_RX_PW_P4, 0);
+		nrf24_writeReg(NRF24_RX_PW_P5, 0);
+		nrf24_writeReg(NRF24_FIFO_STATUS, 0x11);
+		nrf24_writeReg(NRF24_DYNPD, 0);
+		nrf24_writeReg(NRF24_FEATURE, 0);
+	}
+}
